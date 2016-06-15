@@ -1,0 +1,43 @@
+body{
+	background-color: #D9DBD4;
+}
+td{
+	text-align: center;
+	margin: auto;
+	padding: auto;
+}
+.menu{
+	box-sizing:border-box;
+	box-shadow: 2px 0px 5px gray;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 20%;
+	height: 100%;
+	background-color: #F7F9FA;
+	padding: 30px 40px 0px 40px;
+}
+#contenedor-tabla{
+	overflow: scroll;
+	box-sizing: border-box;
+	position: absolute;
+	top: 10px;
+	left: 25%;
+	width: 70%;
+	height: 90%;
+	display: none;
+}
+#contenedor-loading{
+	display: none;
+	position: absolute;
+	top: 30px;
+	left: 25%;
+}
+#alpha{
+	width: 50px;
+	height: 50px;
+}
+#coeficiente{
+	font-size: 20px;
+}
+

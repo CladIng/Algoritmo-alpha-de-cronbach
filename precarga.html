@@ -1,0 +1,160 @@
+
+PLAIN TEXT
+JavaScript:
+
+    <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+    <html>
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <title>Precarga de imágenes con Barra de Progreso</title>
+    <script type="text/javascript">
+    // Ruta de las imagenes que se van a cargar
+    var cargar=new Array("1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg", "7.jpg", "8.jpg");
+    // Leyenda que aparecerá en la capa leyenda
+    var leyenda="Cargando imágenes";
+    // Frecuencia de actualización de la barra de progreso en milisegundos
+    var frecuencia=100;
+    // Cada cuantas actualizaciones de la barra de progreso se desea que cambie la leyenda
+    var cambioLeyenda=10;
+     
+    // Similar a <body onload="cargar()">
+    window.onload=iniciar;
+     
+    function iniciar()
+    {
+        imagenes=new Array();
+        // Recorro el array donde definí las rutas de las imagenes
+        for(i=0; i<cargar.length; i++)
+        {
+            // Creo un nuevo elemento img
+            imagenes[i]=document.createElement("img");
+            // Le asigno el atributo src. Con esto alcanza para que el navegador cargue la imágen, aunque ésta no se muestre
+            imagenes[i].src=cargar[i];
+        }
+       
+        divCompletado=document.getElementById("barraCompletado");
+        divPorcentaje=document.getElementById("barraPorcentaje");
+        divLeyenda=document.getElementById("leyenda");
+        // Variable para monitorear la cantidad de veces que se ejecuta calcularProgreso(). Se utiliza para cambiar la leyenda
+        cantEjecuciones=0;
+        // Esta variable será la responsable de colocar puntos suspensivos en movimiento detrás de la leyenda declarada previamente
+        leyendaActual=leyenda;
+        // Cantidad de puntos suspensivos que debo colocar detrás de la leyenda. Esta variable se irá incrementando hasta llegar a 3. Luego se pondrá en 0 nuevamente
+        puntitos=0;
+       
+        // Llamo a calcularProgreso para colocar la barra, leyenda y porcentaje en su estados correspondientes
+        calcularProgreso();
+    }
+     
+    function calcularProgreso()
+    {
+        // Variable que reflejará el porcentaje actual de carga
+        var porcentajeActual=0;
+        var i=0;
+        // Variable para contar la cantidad de imágenes completamente cargadas del total
+        var cantImagenesCompletadas=0;
+        // Incremento la cantidad de ejecuciones de esta función
+        cantEjecuciones++;
+     
+        if(cantEjecuciones==cambioLeyenda)
+        {
+            // Si en la última actualización se colocaron 3 puntos suspensivos, ahora no se colocará ninguno
+            if(puntitos==3) puntitos=0;
+            else puntitos++;
+           
+            leyendaActual=leyenda;
+     
+            cantEjecuciones=0;
+           
+            // Con este while coloco los puntos suspensivos detrás de la leyenda. Se colocarán tantos puntos como diga la variable puntitos
+            while(i<puntitos)
+            {
+                leyendaActual+=".";
+                i++;
+            }
+        }
+       
+        // En este for recorro el array de los elementos img y pregunto cuales de ellos han terminado de cargarse
+        for(i=0; i<imagenes.length; i++)
+        {
+            // Por cada imágen cargada incremento la variable cantImagenesCompletadas
+            if(imagenes[i].complete)
+            {
+                cantImagenesCompletadas++;
+                mostrarImagen(imagenes[i]);
+            }
+        }
+        // Calculo el porcentaje actual de carga con una regla de 3 en base a la cantidad de imágenes totales y las ya cargadas y rendondeo sin decimales
+        porcentajeActual=Math.ceil(cantImagenesCompletadas*100/cargar.length);
+       
+        // Reflejo los cambios en las capas que corresponda
+        divLeyenda.innerHTML=leyendaActual;
+        divPorcentaje.innerHTML=porcentajeActual+"%";
+        divCompletado.style.width=porcentajeActual+"%";
+       
+        // Si el porcentaje de carga es distinto 100 vuelvo a llamar a esta misma función con setTimeout
+        if(porcentajeActual==100) finCarga();
+        else setTimeout("calcularProgreso()", frecuencia);
+    }
+     
+    function finCarga()
+    {
+        // Acciones a realizar cuando se finalizó la carga de todas las imágenes
+        divLeyenda.innerHTML="Carga completa";
+        alert("Carga completa");
+    }
+     
+    function mostrarImagen(imagen)
+    {
+        var capa=document.getElementById("mostrar");
+        capa.appendChild(imagen);
+    }
+    </script>
+     
+     
+    <style type="text/css">
+    #barraTotal
+    {
+        position:relative;
+        width:200px;
+        height:30px;
+        background-color:#000000;
+    }
+     
+    #barraCompletado
+    {
+        position:absolute;
+        top:0; left:0;
+        width:1%;
+        /* height se expresa en px y no en % porque el IE6 tiene algún problema extraño actualizando el div expresado en porcentaje */
+        height:30px;
+        background-color:#999999;
+    }
+     
+    #barraPorcentaje
+    {
+        position:absolute;
+        top:5px; left:5px;
+        color:#FFFFFF;
+        font-weight:bold;
+    }
+     
+    .esconder
+    {
+    visibility:hidden;
+    }
+    </style>
+    </head>
+     
+    <body>
+    <div id="contendor">
+        <div id="leyenda"></div>
+        <div id="barraTotal">
+            <div id="barraCompletado"></div>
+            <div id="barraPorcentaje"></div>
+        </div>
+    </div>
+    <div id="mostrar"></div>
+    </body>
+    </html>
+
